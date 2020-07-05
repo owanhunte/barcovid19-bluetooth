@@ -7,10 +7,11 @@
  *
  * @format
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import SplashScreen from 'react-native-splash-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { RootTabsParamList } from 'types';
 import HomeDrawerScreen from 'screens/HomeDrawerScreen';
@@ -26,6 +27,10 @@ const sharedStyles = {
 };
 
 export default function App() {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <NavigationContainer>
