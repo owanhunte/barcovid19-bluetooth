@@ -1,4 +1,7 @@
 {
   "name": "BarCovid19",
-  "displayName": "BarCovid19"
+  "displayName": "BarCovid19",
+  "slug": "BarCOVID19",
+  "version": "1.0.0",
+  "orientation": "portrait"
 }
