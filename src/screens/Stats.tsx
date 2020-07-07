@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import ConfirmedCasesSvg from 'components/svgs/cases';
-import FemaleSvg from 'components/svgs/female';
-import MaleSvg from 'components/svgs/male';
-import ActiveCasesSvg from 'components/svgs/active';
-import RecoveredSvg from 'components/svgs/recovered';
-import DeathsSvg from 'components/svgs/deaths';
+import ConfirmedCasesSvg from 'components/svgs/ConfirmedCases';
+import FemaleSvg from 'components/svgs/Female';
+import MaleSvg from 'components/svgs/Male';
+import ActiveCasesSvg from 'components/svgs/ActiveCases';
+import RecoveredSvg from 'components/svgs/Recovered';
+import DeathsSvg from 'components/svgs/Deaths';
 import { getStats } from 'fetchers/stats';
 import { RootDrawerParamList } from 'types';
 import Header from 'components/Header';

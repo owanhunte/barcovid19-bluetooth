@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   View,
@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import YoutubePlayer from 'react-native-youtube-iframe';
+import SettingsContext from 'context/settingsContext';
 import NewsCarousel from 'components/news/Carousel';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
@@ -23,6 +24,7 @@ type Props = {
 };
 
 const Main: React.FC<Props> = ({ navigation }) => {
+  const _settingsContext = useContext(SettingsContext);
   const [playing] = useState(true);
   const window = useWindowDimensions();
   const yvWidth = Math.ceil(window.width - 40);
@@ -35,6 +37,25 @@ const Main: React.FC<Props> = ({ navigation }) => {
   const goToNewsScreen = () => {
     navigation.navigate('News');
   };
+
+  useEffect(() => {
+    let timer: number | null = null;
+    if (!_settingsContext.onBoarded) {
+      if (timer !== null) {
+        clearInterval(timer);
+      }
+
+      timer = setTimeout(() => {
+        navigation.navigate('OnboardingScreen1');
+      }, 1200);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+  }, [_settingsContext.onBoarded, navigation]);
 
   const screenStyles = StyleSheet.create({
     youtubeVidWrapper: {

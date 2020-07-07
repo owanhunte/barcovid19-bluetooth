@@ -1,3 +1,9 @@
+export type RootStackParamList = {
+  Home: undefined;
+  OnboardingScreen1: undefined;
+  OnboardingScreen2: undefined;
+};
+
 export type RootTabsParamList = {
   Dashboard: undefined;
   News: undefined;
@@ -12,7 +18,22 @@ export type RootDrawerParamList = {
   Stats: undefined;
   Hotline: undefined;
   ReportSelf: undefined;
+  OnboardingScreen1: undefined;
 };
+
+//------------------------ Data types for COVID-19 API Statistics ------------------------------//
+
+export interface UserSettings {
+  onBoarded: boolean;
+  enabledExposureNotifySystem: boolean;
+  enabledNotifications: boolean;
+}
+
+export interface SettingsContextType extends UserSettings {
+  enableExposureNotiySystem(allow: boolean): Promise<void>;
+  enableNotifications(allow: boolean): Promise<void>;
+  setAsOnboared(onboarded: boolean): Promise<void>;
+}
 
 //------------------------ Data types for COVID-19 API Statistics ------------------------------//
 

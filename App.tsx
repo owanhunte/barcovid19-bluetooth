@@ -7,109 +7,85 @@
  *
  * @format
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { RootTabsParamList } from 'types';
-import HomeDrawerScreen from 'screens/HomeDrawerScreen';
-import NewsDrawerScreen from 'screens/NewsDrawerScreen';
-import ImmigrationDrawerScreen from 'screens/ImmigrationDrawerScreen';
-import StatsDrawerScreen from 'screens/StatsDrawerScreen';
+import { SettingsContextType, RootStackParamList } from 'types';
+import OnboardingScreen1 from 'screens/OnboardingScreen1';
+import OnboardingScreen2 from 'screens/OnboardingScreen2';
+import SettingsContext from 'context/settingsContext';
+import { getSettingsFromStorage } from 'fetchers/userSettings';
+import AppTabs from 'AppTabs';
 
-const Tab = createBottomTabNavigator<RootTabsParamList>();
-
-const sharedStyles = {
-  paddingBottom: 5,
-  paddingTop: 6,
-};
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [settings, updateSettings] = useState<SettingsContextType>({
+    onBoarded: false,
+    enabledExposureNotifySystem: false,
+    enabledNotifications: false,
+    enableExposureNotiySystem: async (allow: boolean) => {
+      updateSettings((prev: SettingsContextType) => ({
+        ...prev,
+        enabledExposureNotifySystem: allow,
+      }));
+    },
+    enableNotifications: async (allow) => {
+      updateSettings((prev: SettingsContextType) => ({
+        ...prev,
+        enabledNotifications: allow,
+      }));
+    },
+    setAsOnboared: async (onboarded) => {
+      updateSettings((prev: SettingsContextType) => ({
+        ...prev,
+        onBoarded: onboarded,
+      }));
+    },
+  });
+
   useEffect(() => {
-    SplashScreen.hide();
+    let mounted = true;
+    (async () => {
+      try {
+        SplashScreen.hide();
+
+        // Grab user settings on app load.
+        const userSettings = await getSettingsFromStorage();
+        if (mounted) {
+          updateSettings((prev: SettingsContextType) => ({
+            ...prev,
+            ...userSettings,
+          }));
+        }
+      } catch (error) {
+        // TODO: Show error letting user know something went wrong and to contact support if problem persists.
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName = focused ? 'home' : 'home-outline';
-
-              if (route.name === 'News') {
-                iconName = focused ? 'newspaper' : 'newspaper-outline';
-              } else if (route.name === 'Immigration') {
-                iconName = focused ? 'airplane' : 'airplane-outline';
-              } else if (route.name === 'Stats') {
-                iconName = focused ? 'stats-chart' : 'stats-chart-outline';
-              }
-
-              return <Icon name={iconName} size={size} color={color} />;
-            },
-          })}
-          tabBarOptions={{
-            activeTintColor: 'tomato',
-            inactiveTintColor: 'gray',
-            style: sharedStyles,
-          }}
-          initialRouteName="Dashboard">
-          <Tab.Screen
-            name="Dashboard"
-            component={HomeDrawerScreen}
-            listeners={({ navigation }) => ({
-              tabPress: (e) => {
-                // Prevent default action
-                e.preventDefault();
-
-                // Do something with the `navigation` object
-                navigation.navigate('Dashboard', { screen: 'Dashboard' });
-              },
-            })}
-          />
-          <Tab.Screen
-            name="News"
-            component={NewsDrawerScreen}
-            listeners={({ navigation }) => ({
-              tabPress: (e) => {
-                // Prevent default action
-                e.preventDefault();
-
-                // Do something with the `navigation` object
-                navigation.navigate('News', { screen: 'News' });
-              },
-            })}
-          />
-          <Tab.Screen
-            name="Immigration"
-            component={ImmigrationDrawerScreen}
-            listeners={({ navigation }) => ({
-              tabPress: (e) => {
-                // Prevent default action
-                e.preventDefault();
-
-                // Do something with the `navigation` object
-                navigation.navigate('Immigration', { screen: 'Immigration' });
-              },
-            })}
-          />
-          <Tab.Screen
-            name="Stats"
-            component={StatsDrawerScreen}
-            listeners={({ navigation }) => ({
-              tabPress: (e) => {
-                // Prevent default action
-                e.preventDefault();
-
-                // Do something with the `navigation` object
-                navigation.navigate('Stats', { screen: 'Stats' });
-              },
-            })}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <SettingsContext.Provider value={settings}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator headerMode="none" initialRouteName="Home">
+            <Stack.Screen name="Home" component={AppTabs} />
+            <Stack.Screen
+              name="OnboardingScreen1"
+              component={OnboardingScreen1}
+            />
+            <Stack.Screen
+              name="OnboardingScreen2"
+              component={OnboardingScreen2}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </SettingsContext.Provider>
   );
 }
