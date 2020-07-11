@@ -16,7 +16,10 @@ import { SettingsContextType, RootStackParamList } from 'types';
 import OnboardingScreen1 from 'screens/OnboardingScreen1';
 import OnboardingScreen2 from 'screens/OnboardingScreen2';
 import SettingsContext from 'context/settingsContext';
-import { getSettingsFromStorage } from 'fetchers/userSettings';
+import {
+  getSettingsFromStorage,
+  syncWithSettingsInStorage,
+} from 'fetchers/userSettings';
 import AppTabs from 'AppTabs';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -26,19 +29,28 @@ export default function App() {
     onBoarded: false,
     enabledExposureNotifySystem: false,
     enabledNotifications: false,
-    enableExposureNotiySystem: async (allow: boolean) => {
+    enableExposureNotifySystem: async (allow: boolean) => {
+      await syncWithSettingsInStorage({
+        enabledExposureNotifySystem: allow,
+      });
       updateSettings((prev: SettingsContextType) => ({
         ...prev,
         enabledExposureNotifySystem: allow,
       }));
     },
     enableNotifications: async (allow) => {
+      await syncWithSettingsInStorage({
+        enabledNotifications: allow,
+      });
       updateSettings((prev: SettingsContextType) => ({
         ...prev,
         enabledNotifications: allow,
       }));
     },
-    setAsOnboared: async (onboarded) => {
+    setAsOnboarded: async (onboarded) => {
+      await syncWithSettingsInStorage({
+        onBoarded: onboarded,
+      });
       updateSettings((prev: SettingsContextType) => ({
         ...prev,
         onBoarded: onboarded,

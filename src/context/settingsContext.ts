@@ -5,13 +5,13 @@ const SettingsContext = React.createContext<SettingsContextType>({
   onBoarded: false,
   enabledExposureNotifySystem: false,
   enabledNotifications: false,
-  enableExposureNotiySystem: async (_allow: boolean) => {
+  enableExposureNotifySystem: async (_allow: boolean) => {
     /* defined by the root ancestor component that uses this context. */
   },
   enableNotifications: async (_allow: boolean) => {
     /* defined by the root ancestor component that uses this context. */
   },
-  setAsOnboared: async (_onboarded: boolean) => {
+  setAsOnboarded: async (_onboarded: boolean) => {
     /* defined by the root ancestor component that uses this context. */
   },
 });

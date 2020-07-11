@@ -22,14 +22,14 @@ const OnboardingScreen1: React.FC<Props> = ({ navigation }) => {
           />
           <Text style={styles.logoText}>
             <Text style={styles.bold}>
-              COVID-19
+              COVID
               {'\n'}
             </Text>
             <Text>Notify</Text>
           </Text>
         </View>
         <Text style={styles.heading}>
-          Keep yourself, loved ones and others safe
+          COVID Notify: Keep yourself, loved ones and others safe
         </Text>
         <View style={styles.pitchInner}>
           <Icon
@@ -70,7 +70,7 @@ const OnboardingScreen1: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('OnboardingScreen2')}>
               <Text style={{ ...styles.pitchText, ...styles.textLink }}>
-                Learn how COVID-19 Notify works
+                Learn how COVID Notify works
               </Text>
             </TouchableOpacity>
           </View>

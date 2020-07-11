@@ -4,7 +4,7 @@ import { UserSettings } from 'types';
 const storageKey = 'user_settings';
 
 export const getSettingsFromStorage = async (): Promise<UserSettings> => {
-  let settings = {
+  let settings: UserSettings = {
     onBoarded: false,
     enabledExposureNotifySystem: false,
     enabledNotifications: false,

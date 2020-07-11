@@ -16,11 +16,14 @@ import SettingsContext from 'context/settingsContext';
 import NewsCarousel from 'components/news/Carousel';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
-import { RootDrawerParamList } from 'types';
+import { RootDrawerParamList, RootStackParamList } from 'types';
 import styles from 'styles/global';
 
 type Props = {
-  navigation: DrawerNavigationProp<RootDrawerParamList, 'Dashboard'>;
+  navigation: DrawerNavigationProp<
+    RootDrawerParamList & RootStackParamList,
+    'Dashboard'
+  >;
 };
 
 const Main: React.FC<Props> = ({ navigation }) => {

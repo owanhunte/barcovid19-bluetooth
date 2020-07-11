@@ -4,14 +4,15 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { RootTabsParamList } from 'types';
 import HomeDrawerScreen from 'screens/HomeDrawerScreen';
 import NewsDrawerScreen from 'screens/NewsDrawerScreen';
-import ImmigrationDrawerScreen from 'screens/ImmigrationDrawerScreen';
 import StatsDrawerScreen from 'screens/StatsDrawerScreen';
+import CovidNotify from 'screens/CovidNotify/Landing';
 
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const sharedStyles = {
   paddingBottom: 5,
-  paddingTop: 6,
+  paddingTop: 10,
+  height: 55,
 };
 
 export default function AppTabs() {
@@ -23,10 +24,10 @@ export default function AppTabs() {
 
           if (route.name === 'News') {
             iconName = focused ? 'newspaper' : 'newspaper-outline';
-          } else if (route.name === 'Immigration') {
-            iconName = focused ? 'airplane' : 'airplane-outline';
           } else if (route.name === 'Stats') {
             iconName = focused ? 'stats-chart' : 'stats-chart-outline';
+          } else if (route.name === 'CovidNotifyLanding') {
+            iconName = focused ? 'radio' : 'radio-outline';
           }
 
           return <Icon name={iconName} size={size} color={color} />;
@@ -41,12 +42,10 @@ export default function AppTabs() {
       <Tab.Screen
         name="Dashboard"
         component={HomeDrawerScreen}
+        options={{ title: 'Home' }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            // Prevent default action
             e.preventDefault();
-
-            // Do something with the `navigation` object
             navigation.navigate('Dashboard', { screen: 'Dashboard' });
           },
         })}
@@ -56,24 +55,8 @@ export default function AppTabs() {
         component={NewsDrawerScreen}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            // Prevent default action
             e.preventDefault();
-
-            // Do something with the `navigation` object
             navigation.navigate('News', { screen: 'News' });
-          },
-        })}
-      />
-      <Tab.Screen
-        name="Immigration"
-        component={ImmigrationDrawerScreen}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            // Prevent default action
-            e.preventDefault();
-
-            // Do something with the `navigation` object
-            navigation.navigate('Immigration', { screen: 'Immigration' });
           },
         })}
       />
@@ -82,13 +65,15 @@ export default function AppTabs() {
         component={StatsDrawerScreen}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
-            // Prevent default action
             e.preventDefault();
-
-            // Do something with the `navigation` object
             navigation.navigate('Stats', { screen: 'Stats' });
           },
         })}
+      />
+      <Tab.Screen
+        name="CovidNotifyLanding"
+        component={CovidNotify}
+        options={{ title: 'COVID Notify' }}
       />
     </Tab.Navigator>
   );

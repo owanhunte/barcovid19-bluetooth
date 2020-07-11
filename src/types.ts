@@ -1,3 +1,7 @@
+export type DataHashMap = {
+  [x: string]: any;
+};
+
 export type RootStackParamList = {
   Home: undefined;
   OnboardingScreen1: undefined;
@@ -7,8 +11,8 @@ export type RootStackParamList = {
 export type RootTabsParamList = {
   Dashboard: undefined;
   News: undefined;
-  Immigration: undefined;
   Stats: undefined;
+  CovidNotifyLanding: { fromOnboarding: boolean } | undefined;
 };
 
 export type RootDrawerParamList = {
@@ -18,21 +22,21 @@ export type RootDrawerParamList = {
   Stats: undefined;
   Hotline: undefined;
   ReportSelf: undefined;
-  OnboardingScreen1: undefined;
+  Settings: undefined;
 };
 
 //------------------------ Data types for COVID-19 API Statistics ------------------------------//
 
 export interface UserSettings {
-  onBoarded: boolean;
-  enabledExposureNotifySystem: boolean;
-  enabledNotifications: boolean;
+  onBoarded?: boolean;
+  enabledExposureNotifySystem?: boolean;
+  enabledNotifications?: boolean;
 }
 
 export interface SettingsContextType extends UserSettings {
-  enableExposureNotiySystem(allow: boolean): Promise<void>;
+  enableExposureNotifySystem(allow: boolean): Promise<void>;
   enableNotifications(allow: boolean): Promise<void>;
-  setAsOnboared(onboarded: boolean): Promise<void>;
+  setAsOnboarded(onboarded: boolean): Promise<void>;
 }
 
 //------------------------ Data types for COVID-19 API Statistics ------------------------------//
