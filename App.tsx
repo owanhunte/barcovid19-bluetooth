@@ -12,35 +12,73 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
+import { useBluetoothStatus } from 'react-native-bluetooth-status';
+
+import BackgroundFetch, {
+  BackgroundFetchStatus,
+} from 'react-native-background-fetch';
+
 import { SettingsContextType, RootStackParamList } from 'types';
 import OnboardingScreen1 from 'screens/OnboardingScreen1';
 import OnboardingScreen2 from 'screens/OnboardingScreen2';
 import SettingsContext from 'context/settingsContext';
+import AppTabs from 'AppTabs';
+import { statusToString } from 'utils';
+
 import {
   getSettingsFromStorage,
   syncWithSettingsInStorage,
 } from 'fetchers/userSettings';
-import AppTabs from 'AppTabs';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+declare var global: { HermesInternal: null | {} };
+
 export default function App() {
+  const [btStatus] = useBluetoothStatus();
   const [settings, updateSettings] = useState<SettingsContextType>({
     onBoarded: false,
     enabledExposureNotifySystem: false,
     enabledNotifications: false,
+    bluetoothOn: btStatus,
     enableExposureNotifySystem: async (allow: boolean) => {
       await syncWithSettingsInStorage({
         enabledExposureNotifySystem: allow,
+        bluetoothOn: btStatus,
       });
       updateSettings((prev: SettingsContextType) => ({
         ...prev,
         enabledExposureNotifySystem: allow,
       }));
+
+      // Configure BackgroundFetch for the exposure notification system.
+      BackgroundFetch.configure(
+        {
+          minimumFetchInterval: 15,
+          forceAlarmManager: false,
+          stopOnTerminate: false,
+          enableHeadless: true,
+          startOnBoot: true,
+          requiredNetworkType: BackgroundFetch.NETWORK_TYPE_NONE,
+          requiresCharging: false,
+          requiresDeviceIdle: false,
+          requiresBatteryNotLow: false,
+          requiresStorageNotLow: false,
+        },
+        onBackgroundFetchEvent,
+        (status: BackgroundFetchStatus) => {
+          console.log(
+            '[BackgroundFetch] status',
+            statusToString(status),
+            status,
+          );
+        },
+      );
     },
     enableNotifications: async (allow) => {
       await syncWithSettingsInStorage({
         enabledNotifications: allow,
+        bluetoothOn: btStatus,
       });
       updateSettings((prev: SettingsContextType) => ({
         ...prev,
@@ -50,6 +88,7 @@ export default function App() {
     setAsOnboarded: async (onboarded) => {
       await syncWithSettingsInStorage({
         onBoarded: onboarded,
+        bluetoothOn: btStatus,
       });
       updateSettings((prev: SettingsContextType) => ({
         ...prev,
@@ -57,6 +96,15 @@ export default function App() {
       }));
     },
   });
+
+  const onBackgroundFetchEvent = async (taskId: string) => {
+    console.log('[BackgroundFetch] Event received: ', taskId);
+
+    // Required: Signal completion of your task to native code
+    // If you fail to do this, the OS can terminate your app
+    // or assign battery-blame for consuming too much background-time
+    BackgroundFetch.finish(taskId);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -66,10 +114,12 @@ export default function App() {
 
         // Grab user settings on app load.
         const userSettings = await getSettingsFromStorage();
+        console.log('Bluetooth status is: ', btStatus);
         if (mounted) {
           updateSettings((prev: SettingsContextType) => ({
             ...prev,
             ...userSettings,
+            bluetoothOn: btStatus,
           }));
         }
       } catch (error) {
@@ -79,7 +129,7 @@ export default function App() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [btStatus]);
 
   return (
     <SettingsContext.Provider value={settings}>

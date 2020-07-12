@@ -1,9 +1,11 @@
 import React from 'react';
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { useBluetoothStatus } from 'react-native-bluetooth-status';
 import BluetoothDisabled from 'components/svgs/BluetoothDisabled';
-import { DataHashMap } from 'types';
 
-const BluetoothOff: React.FC<DataHashMap> = (props) => {
+const BluetoothOff: React.FC = () => {
+  const [, , setBluetooth] = useBluetoothStatus();
+
   return (
     <>
       <BluetoothDisabled style={styles.icon} />
@@ -12,13 +14,15 @@ const BluetoothOff: React.FC<DataHashMap> = (props) => {
         Your phone's Bluetooth features are used to collect and share random IDs
         needed for COVID Notify to work.
       </Text>
-      <TouchableOpacity
-        onPress={() => {
-          props.enableBluetooth(true);
-        }}
-        style={styles.actionButton}>
-        <Text style={styles.actionButtonText}>Turn on Bluetooth</Text>
-      </TouchableOpacity>
+      {Platform.OS === 'android' && (
+        <TouchableOpacity
+          onPress={() => {
+            setBluetooth(true);
+          }}
+          style={styles.actionButton}>
+          <Text style={styles.actionButtonText}>Turn on Bluetooth</Text>
+        </TouchableOpacity>
+      )}
     </>
   );
 };

@@ -5,6 +5,7 @@ const SettingsContext = React.createContext<SettingsContextType>({
   onBoarded: false,
   enabledExposureNotifySystem: false,
   enabledNotifications: false,
+  bluetoothOn: undefined,
   enableExposureNotifySystem: async (_allow: boolean) => {
     /* defined by the root ancestor component that uses this context. */
   },

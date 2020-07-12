@@ -45,7 +45,7 @@ const Main: React.FC<Props> = ({ navigation }) => {
     let timer: number | null = null;
     if (!_settingsContext.onBoarded) {
       if (timer !== null) {
-        clearInterval(timer);
+        clearTimeout(timer);
       }
 
       timer = setTimeout(() => {

@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { useBluetoothStatus } from 'react-native-bluetooth-status';
 import SettingsContext from 'context/settingsContext';
 import { RootTabsParamList } from 'types';
 import Tick from 'components/svgs/Tick';
@@ -22,9 +21,7 @@ type Props = BottomTabScreenProps<RootTabsParamList, 'CovidNotifyLanding'>;
 
 const CovidNotify: React.FC<Props> = ({ route }) => {
   const _settingsContext = useContext(SettingsContext);
-  const [btStatus, isPending, setBluetooth] = useBluetoothStatus();
   const [showThankYouDialog, setShowThankYouDialog] = useState(false);
-  const [btEnabled, setBtEnabled] = useState<boolean>(!isPending && btStatus);
   const [dismissed, setDismissed] = useState(false);
 
   let fromOnboarding: boolean = false;
@@ -48,19 +45,10 @@ const CovidNotify: React.FC<Props> = ({ route }) => {
     ) {
       setShowThankYouDialog(true);
     }
-    if (mounted) {
-      setBtEnabled(!isPending && btStatus);
-    }
     return () => {
       mounted = false;
     };
-  }, [
-    _settingsContext.enabledExposureNotifySystem,
-    btStatus,
-    dismissed,
-    fromOnboarding,
-    isPending,
-  ]);
+  }, [_settingsContext.enabledExposureNotifySystem, dismissed, fromOnboarding]);
 
   return (
     <SafeAreaView style={styles.savContainer}>
@@ -79,13 +67,11 @@ const CovidNotify: React.FC<Props> = ({ route }) => {
           </Text>
         </View>
 
-        {_settingsContext.enabledExposureNotifySystem && btEnabled && (
-          <ExposureStatus />
-        )}
+        {_settingsContext.enabledExposureNotifySystem &&
+          _settingsContext.bluetoothOn && <ExposureStatus />}
 
-        {_settingsContext.enabledExposureNotifySystem && !btEnabled && (
-          <BluetoothOff enableBluetooth={setBluetooth} />
-        )}
+        {_settingsContext.enabledExposureNotifySystem &&
+          !_settingsContext.bluetoothOn && <BluetoothOff />}
 
         {!_settingsContext.enabledExposureNotifySystem && <CovidNotifyOff />}
 

@@ -31,6 +31,7 @@ export interface UserSettings {
   onBoarded?: boolean;
   enabledExposureNotifySystem?: boolean;
   enabledNotifications?: boolean;
+  bluetoothOn?: boolean;
 }
 
 export interface SettingsContextType extends UserSettings {

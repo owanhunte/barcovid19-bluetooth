@@ -32,5 +32,5 @@ export const syncWithSettingsInStorage = async (
     ...settings,
   });
 
-  await AsyncStorage.setItem(storageKey, jsonValue);
+  return AsyncStorage.setItem(storageKey, jsonValue);
 };
