@@ -13,6 +13,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
 import { useBluetoothStatus } from 'react-native-bluetooth-status';
+import BLEAdvertiser from 'react-native-ble-advertiser';
 
 import BackgroundFetch, {
   BackgroundFetchStatus,
@@ -99,6 +100,19 @@ export default function App() {
 
   const onBackgroundFetchEvent = async (taskId: string) => {
     console.log('[BackgroundFetch] Event received: ', taskId);
+
+    if (settings.enabledExposureNotifySystem && settings.bluetoothOn) {
+      // Set company ID as recognized by Bluetooth SIG
+      BLEAdvertiser.setCompanyId(0xffff); // Your Company's Code
+
+      // Broadcast service UUID with additional manufactoring data.
+      // try {
+      //   const success = BLEAdvertiser.broadcast([UUID], [ManufacturerData], {});
+      //   console.log('Broadcasting Sucessful', success);
+      // } catch (error) {
+      //   console.log('Broadcasting Error', error);
+      // }
+    }
 
     // Required: Signal completion of your task to native code
     // If you fail to do this, the OS can terminate your app
